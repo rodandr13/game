@@ -22,7 +22,7 @@ INITIAL_STAMP = {
 def generate_stamp(previous_value):
     score_changed = random.random() > 1 - PROBABILITY_SCORE_CHANGED
     home_score_change = 1 if score_changed and random.random() > 1 - \
-        PROBABILITY_HOME_SCORE else 0
+                             PROBABILITY_HOME_SCORE else 0
     away_score_change = 1 if score_changed and not home_score_change else 0
     offset_change = math.floor(random.random() * OFFSET_MAX_STEP) + 1
 
@@ -50,20 +50,40 @@ game_stamps = generate_game()
 # pprint(game_stamps)
 
 
+def check_arguments(game_stamps, offset):
+    if not isinstance(game_stamps, list) or not game_stamps:
+        raise ValueError(
+            "game_stamps должен быть списком и содержать временные отметки"
+        )
+    if not isinstance(offset, int):
+        raise TypeError("offset должен быть int")
+    elif (offset < 0) or (offset > TIMESTAMPS_COUNT * OFFSET_MAX_STEP):
+        raise ValueError(f"offset должен больше 0 и меньше {TIMESTAMPS_COUNT * OFFSET_MAX_STEP}")
+
+
 def get_score(game_stamps, offset):
+    check_arguments(game_stamps, offset)
     low = 0
     high = len(game_stamps) - 1
     while low <= high:
         mid = (low + high) // 2
         guess = game_stamps[mid]
-        if guess["offset"] == offset:
-            return guess["score"]["home"], guess["score"]["away"]
-        elif guess["offset"] > offset:
-            high = mid - 1
-        else:
-            low = mid + 1
+        if not isinstance(guess["offset"], int):
+            raise TypeError("guess[\"offset\"] должен быть int")
+        try:
+            if guess["offset"] == offset:
+                home = guess["score"]["home"]
+                away = guess["score"]["away"]
+                return home, away
+            elif guess["offset"] > offset:
+                high = mid - 1
+            else:
+                low = mid + 1
+        except KeyError as error:
+            raise KeyError("game_stamps имеет неверную структуру", error)
 
     return None
 
 
-print(get_score(game_stamps, 50000))
+# print(get_score(test, 1))
+
