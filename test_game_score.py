@@ -1,7 +1,6 @@
 import unittest
-import random
 
-from game_score import get_score, generate_game, TIMESTAMPS_COUNT, OFFSET_MAX_STEP
+from game_score import get_score, TIMESTAMPS_COUNT, OFFSET_MAX_STEP
 
 
 class TestGameScore(unittest.TestCase):

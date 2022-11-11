@@ -58,7 +58,16 @@ def check_arguments(game_stamps, offset):
     if not isinstance(offset, int):
         raise TypeError("offset должен быть int")
     elif (offset < 0) or (offset > TIMESTAMPS_COUNT * OFFSET_MAX_STEP):
-        raise ValueError(f"offset должен больше 0 и меньше {TIMESTAMPS_COUNT * OFFSET_MAX_STEP}")
+        raise ValueError(
+            f"offset должен быть больше 0 и меньше "
+            f"{TIMESTAMPS_COUNT * OFFSET_MAX_STEP}"
+        )
+
+
+def check_scores(score):
+    if not isinstance(score, int):
+        raise TypeError("score должен быть int")
+    return score
 
 
 def get_score(game_stamps, offset):
@@ -72,8 +81,8 @@ def get_score(game_stamps, offset):
             raise TypeError("guess[\"offset\"] должен быть int")
         try:
             if guess["offset"] == offset:
-                home = guess["score"]["home"]
-                away = guess["score"]["away"]
+                home = check_scores(guess["score"]["home"])
+                away = check_scores(guess["score"]["away"])
                 return home, away
             elif guess["offset"] > offset:
                 high = mid - 1
